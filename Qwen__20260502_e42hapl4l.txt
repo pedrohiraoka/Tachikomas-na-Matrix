@@ -1,7 +1,0 @@
-knowledge_engine/
-├── conceptnet_loader.py       # Carregamento do dump do ConceptNet
-├── graph_embedder.py          # Geração de embeddings com Ampligraph/OpenKE
-├── semantic_reasoner.py       # Inferência e expansão de conceitos
-├── memory_encoder.py          # Codificação de experiências em vetores conceituais
-├── query_interface.py         # API para consultas semânticas
-└── concept_evolution.py       # Atualização dinâmica do grafo com novas experiências
