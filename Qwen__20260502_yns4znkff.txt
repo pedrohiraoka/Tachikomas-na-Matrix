@@ -1,0 +1,7 @@
+tachikoma_core/
+├── tachikoma_unit.py          # Classe base para cada unidade Tachikoma
+├── ghost_engine.py            # Motor de "ghost" (consciência rudimentar)
+├── memory_sync.py             # Sincronização de memória via rede compartilhada
+├── individualization.py       # Mecanismo de emergência de traços pessoais
+├── network_protocol.py        # Protocolo de comunicação P2P entre unidades
+└── state_manager.py           # Gerenciamento de estado local e coletivo

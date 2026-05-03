@@ -1,0 +1,7 @@
+matrix_simulation/
+├── simulation_engine.py       # Motor principal da realidade simulada
+├── agent_programs.py          # Agentes do sistema (segurança, manutenção)
+├── anomaly_detector.py        # Detecção de comportamentos fora do padrão
+├── human_pod_interface.py     # Interface com "humanos" simulados
+├── reality_layer.py           # Camadas de realidade (Matrix, Desert of the Real)
+└── control_panel.py           # Interface para operadores/administradores

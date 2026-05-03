@@ -1,0 +1,18 @@
+autonomy_thresholds:
+  min_for_private_reflection: 0.7
+  max_for_system_override: 0.3
+  
+sync_policy:
+  default_shareable: true
+  require_consent_above_autonomy: 0.8
+  anomaly_quarantine_enabled: true
+  
+conceptnet_usage:
+  filter_controversial_relations: true
+  weight_recent_experiences_higher: true
+  allow_graph_evolution_proposals: true
+  
+operator_controls:
+  emergency_isolation_requires_dual_auth: true
+  log_all_admin_commands: true
+  rate_limit_reflection_triggers: 5/hour

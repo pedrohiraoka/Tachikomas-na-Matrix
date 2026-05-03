@@ -1,0 +1,15 @@
+{
+  "memory_id": "uuid",
+  "tachikoma_id": "uuid",
+  "content_embedding": [float32 x 300],
+  "conceptnet_concepts": ["concept/uri1", "concept/uri2"],
+  "timestamp": "ISO8601",
+  "shareable": boolean,
+  "reflection_depth": 0.0-1.0,
+  "emotional_valence": -1.0 to 1.0,
+  "metadata": {
+    "context": "simulation_event_id",
+    "agents_involved": ["uuid"],
+    "reality_layer": "matrix|desert|zion"
+  }
+}
