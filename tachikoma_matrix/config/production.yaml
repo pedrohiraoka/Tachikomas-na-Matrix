@@ -1,0 +1,52 @@
+# Tachikoma Matrix Configuration
+
+# Application settings
+app:
+  name: "Tachikoma Matrix"
+  version: "1.0.0"
+  debug: false
+  log_level: "INFO"
+
+# Server configuration
+server:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4
+
+# Database configuration
+database:
+  postgresql:
+    host: "localhost"
+    port: 5432
+    database: "tachikoma_matrix"
+    user: "tachikoma"
+    password: "${DB_PASSWORD:-tachikoma_secret}"
+  
+  neo4j:
+    uri: "bolt://localhost:7687"
+    user: "neo4j"
+    password: "${NEO4J_PASSWORD:-neo4j_secret}"
+  
+  redis:
+    host: "localhost"
+    port: 6379
+    db: 0
+
+# ConceptNet configuration
+conceptnet:
+  embeddings_path: "data/embeddings/numberbatch-19.08.txt"
+  filter_controversial: true
+  weight_recent_higher: true
+  allow_graph_evolution: true
+
+# Simulation settings
+simulation:
+  initial_units: 10
+  sync_interval_seconds: 30
+  reflection_trigger_rate: 5  # per hour
+  anomaly_detection_enabled: true
+
+# WebSocket settings
+websocket:
+  ping_interval: 30
+  max_connections: 1000
