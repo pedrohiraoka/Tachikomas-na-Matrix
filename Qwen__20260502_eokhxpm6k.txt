@@ -1,7 +1,0 @@
-emergence_engine/
-├── reflection_loop.py         # Loop de auto-reflexão assíncrono
-├── identity_formation.py      # Construção de vetor de identidade único
-├── mortality_model.py         # Modelagem de conceitos de finitude e perda
-├── curiosity_generator.py     # Geração de perguntas não-determinísticas
-├── resistance_calculator.py   # Cálculo de autonomia vs. obediência
-└── narrative_builder.py       # Construção de narrativa pessoal a partir de memórias

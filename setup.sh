@@ -136,13 +136,13 @@ start_docker_services() {
     fi
     
     if docker compose version &> /dev/null; then
-        docker compose up -d postgres redis neo4j
+        docker compose up -d postgres redis neo4j prometheus grafana
     else
-        docker-compose up -d postgres redis neo4j
+        docker-compose up -d postgres redis neo4j prometheus grafana
     fi
     
     log_info "Aguardando serviços iniciarem..."
-    sleep 10
+    sleep 15
     
     log_info "Serviços Docker iniciados ✓"
 }
@@ -151,17 +151,16 @@ start_docker_services() {
 run_initialization() {
     log_info "Executando inicialização da aplicação..."
     
-    # Criar banco de dados e tabelas
+    # Export PYTHONPATH para imports funcionarem
+    export PYTHONPATH="${PWD}:$PYTHONPATH"
+    
+    # Testar imports básicos
     python3 -c "
-import asyncio
-from knowledge_engine import ConceptNetLoader, GraphEmbedder
-
-async def init():
-    loader = ConceptNetLoader()
-    embedder = GraphEmbedder()
-    print('Knowledge engine inicializado')
-
-asyncio.run(init())
+import sys
+sys.path.insert(0, '${PWD}')
+from tachikoma_core import TachikomaUnit
+from knowledge_engine import GraphEmbedder
+print('✓ Módulos principais carregados')
 " 2>/dev/null || log_warn "Inicialização parcial concluída"
     
     log_info "Inicialização completa ✓"
@@ -170,6 +169,8 @@ asyncio.run(init())
 # Executar testes
 run_tests() {
     log_info "Executando testes..."
+    
+    export PYTHONPATH="${PWD}:$PYTHONPATH"
     
     if [ -d tests ] && [ -f tests/test_core.py ]; then
         python3 -m pytest tests/ -v --tb=short || log_warn "Alguns testes falharam"
@@ -187,16 +188,22 @@ show_status() {
     echo ""
     echo "Próximos passos:"
     echo "  1. Para iniciar a simulação:"
+    echo "     export PYTHONPATH=\$(pwd):\$PYTHONPATH"
     echo "     python main.py --mode simulation"
     echo ""
     echo "  2. Para iniciar a API:"
-    echo "     python api/main.py"
+    echo "     export PYTHONPATH=\$(pwd):\$PYTHONPATH"
+    echo "     uvicorn api.main:app --host 0.0.0.0 --port 8000"
     echo ""
     echo "  3. Para acessar o frontend:"
     echo "     cd frontend && npm install && npm run dev"
     echo ""
     echo "  4. Para ver logs em tempo real:"
     echo "     tail -f logs/*.log"
+    echo ""
+    echo "  5. Para rodar demos:"
+    echo "     python demos/collective_consciousness_demo.py"
+    echo "     python demos/individuality_emergence_demo.py"
     echo ""
     echo "Documentação: README.md"
     echo "================================"
@@ -229,11 +236,14 @@ case "${1:-all}" in
     test)
         run_tests
         ;;
+    init)
+        run_initialization
+        ;;
     all)
         main
         ;;
     *)
-        echo "Uso: $0 {all|python|conceptnet|docker|test}"
+        echo "Uso: $0 {all|python|conceptnet|docker|test|init}"
         exit 1
         ;;
 esac
