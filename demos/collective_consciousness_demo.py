@@ -9,8 +9,13 @@ em uma rede coletiva com sincronização via Redis.
 import asyncio
 import logging
 import random
+import sys
+import os
 from datetime import datetime
 from typing import List
+
+# Adicionar workspace ao path para imports funcionarem
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tachikoma_core.tachikoma_unit import TachikomaUnit
 from tachikoma_core.memory_sync import MemorySync

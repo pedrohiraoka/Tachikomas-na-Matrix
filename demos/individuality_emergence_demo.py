@@ -8,7 +8,13 @@ através de reflexão profunda e experiências não compartilhadas.
 
 import asyncio
 import logging
+import sys
+import os
+import numpy as np
 from typing import Dict, List
+
+# Adicionar workspace ao path para imports funcionarem
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tachikoma_core.tachikoma_unit import TachikomaUnit
 from emergence_engine.reflection_loop import ReflectionLoop
@@ -89,10 +95,11 @@ async def run_individuality_emergence_demo():
         
         # Gerar curiosidade baseada no estado atual
         if session >= 3:
-            curiosity_topic = curiosity_generator.generate_curiosity_topic(
+            curiosity_result = curiosity_generator.generate_curiosity(
                 unit.personality_vector,
                 [m["content"] for m in unit.local_memory[-3:]]
             )
+            curiosity_topic = curiosity_result.get('topic', 'Exploração aleatória')
             logger.info(f"Tópico de curiosidade gerado: {curiosity_topic}")
             
             await unit.store_experience({
@@ -104,8 +111,7 @@ async def run_individuality_emergence_demo():
         if unit.autonomy_level > 0.2:
             result = await reflection_loop.start_reflection(
                 unit.ghost_id,
-                unit.local_memory,
-                depth=0.7 + (session * 0.04)
+                unit.local_memory
             )
             
             if result.get('insights'):
@@ -116,14 +122,12 @@ async def run_individuality_emergence_demo():
                         "insight": insight,
                         "autonomy_after": unit.autonomy_level
                     })
-            
-            if result.get('identity_coherence'):
-                logger.info(f"Coerência de identidade: {result['identity_coherence']:.2%}")
         
-        # Calcular divergência
-        divergence = identity_formation.calculate_divergence_from_collective(
+        # Calcular divergência (usando vetor coletivo simulado)
+        collective_avg = np.zeros_like(unit.personality_vector)
+        divergence = identity_formation.calculate_divergence(
             unit.personality_vector,
-            collective_average=[0.5] * 300  # Mock coletivo médio
+            collective_avg
         )
         divergence_history.append(divergence)
         

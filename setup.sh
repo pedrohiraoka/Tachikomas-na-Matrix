@@ -78,21 +78,60 @@ download_conceptnet() {
     log_info "Configurando ConceptNet embeddings..."
     
     CONCEPTNET_FILE="data/conceptnet/numberbatch-19.08.txt.gz"
+    EMBEDDINGS_DIR="data/embeddings"
     
     if [ -f "$CONCEPTNET_FILE" ] || [ -f "data/conceptnet/numberbatch-19.08.txt" ]; then
         log_warn "ConceptNet já existe. Pulando download."
         return
     fi
     
-    log_info "Baixando ConceptNet numberbatch (pode demorar)..."
+    # Verifica se já existem embeddings processados
+    if [ -d "$EMBEDDINGS_DIR" ] && [ "$(ls -A $EMBEDDINGS_DIR 2>/dev/null)" ]; then
+        log_info "Embeddings já processados. Pulando ConceptNet."
+        return
+    fi
     
-    # Download do numberbatch
-    wget -q --show-progress \
+    log_warn "Download do ConceptNet é grande (~700MB). Usando embeddings sintéticos para demo."
+    log_info "Para baixar ConceptNet completo, execute: ./setup.sh conceptnet-full"
+    
+    # Criar embeddings sintéticos para demonstração
+    mkdir -p "$EMBEDDINGS_DIR"
+    python3 -c "
+import numpy as np
+import json
+
+# Gerar embeddings sintéticos para conceitos comuns
+conceitos = ['consciousness', 'identity', 'memory', 'autonomy', 'reality', 'self', 'thought', 'existence']
+embeddings = {}
+for conceito in conceitos:
+    embeddings[f'/c/en/{conceito}'] = np.random.randn(300).astype(np.float32).tolist()
+
+# Salvar em formato simples
+with open('$EMBEDDINGS_DIR/synthetic_embeddings.json', 'w') as f:
+    json.dump(embeddings, f)
+
+print(f'✓ Gerados {len(embeddings)} embeddings sintéticos')
+"
+    
+    log_info "ConceptNet configurado (modo demo) ✓"
+}
+
+# Baixar ConceptNet completo (opcional)
+download_conceptnet_full() {
+    log_info "Baixando ConceptNet completo (pode demorar 10-30 minutos)..."
+    
+    CONCEPTNET_FILE="data/conceptnet/numberbatch-19.08.txt.gz"
+    
+    if [ -f "$CONCEPTNET_FILE" ] || [ -f "data/conceptnet/numberbatch-19.08.txt" ]; then
+        log_warn "ConceptNet já existe. Pulando download."
+        return
+    fi
+    
+    wget --show-progress \
         https://conceptnet.s3.amazonaws.com/downloads/2019/numberbatch/numberbatch-19.08.txt.gz \
         -P data/conceptnet/ || {
-        log_warn "Falha ao baixar ConceptNet. Usando embeddings sintéticos."
-        touch "$CONCEPTNET_FILE"
-        return
+        log_error "Falha ao baixar ConceptNet."
+        exit 1
     }
     
     log_info "Extraindo ConceptNet..."
@@ -103,11 +142,9 @@ download_conceptnet() {
         python3 scripts/preprocess_conceptnet.py \
             --input data/conceptnet/numberbatch-19.08.txt \
             --output data/embeddings/
-    else
-        log_warn "Script de preprocessamento não encontrado. Pulando."
     fi
     
-    log_info "ConceptNet configurado ✓"
+    log_info "ConceptNet completo configurado ✓"
 }
 
 # Iniciar serviços Docker
@@ -230,6 +267,9 @@ case "${1:-all}" in
     conceptnet)
         download_conceptnet
         ;;
+    conceptnet-full)
+        download_conceptnet_full
+        ;;
     docker)
         start_docker_services
         ;;
@@ -243,7 +283,16 @@ case "${1:-all}" in
         main
         ;;
     *)
-        echo "Uso: $0 {all|python|conceptnet|docker|test|init}"
+        echo "Uso: $0 {all|python|conceptnet|conceptnet-full|docker|test|init}"
+        echo ""
+        echo "Opções:"
+        echo "  all              - Executa setup completo (padrão)"
+        echo "  python           - Instala dependências Python"
+        echo "  conceptnet       - Configura ConceptNet (modo demo com embeddings sintéticos)"
+        echo "  conceptnet-full  - Baixa ConceptNet completo (~700MB, demorado)"
+        echo "  docker           - Inicia serviços Docker"
+        echo "  test             - Executa testes"
+        echo "  init             - Executa inicialização da aplicação"
         exit 1
         ;;
 esac
