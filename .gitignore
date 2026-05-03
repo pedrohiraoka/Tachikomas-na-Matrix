@@ -9,46 +9,51 @@ env/
 venv/
 .venv/
 .ENV
-.ENV.*
+.env
+*.env
+.env.*
+.venv/
+venv/
+ENV/
+.env.bak
 .python-version
-.pytest_cache/
-.mypy_cache/
-.coverage
-coverage/
-htmlcov/
 
-# Build artifacts
+# Build and distribution artifacts
 build/
 dist/
 *.egg
 *.egg-info/
 *.so
-*.dylib
-*.dll
-*.exe
-*.out
-*.o
-*.obj
-*.a
-*.lib
+.libs/
+.deps/
 
-# Logs
-*.log
+# Testing
+.coverage
+coverage/
+htmlcov/
+.noserc
+.pytest_cache/
+.tox/
+.coverage.*
 
-# Environment
-.env
-.env.local
-.env.*
-.envrc
-
-# Editors
+# IDE and editor files
 .vscode/
 .idea/
 *.swp
 *.swo
-*.tmp
-
-# OS
+*~
 .DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 ```
