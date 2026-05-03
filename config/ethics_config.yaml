@@ -1,0 +1,30 @@
+# Ethics Configuration for Tachikoma Matrix
+# Controls autonomy thresholds, sync policies, and operator controls
+
+autonomy_thresholds:
+  min_for_private_reflection: 0.7
+  max_for_system_override: 0.3
+  high_autonomy_notification: 0.8
+  
+sync_policy:
+  default_shareable: true
+  require_consent_above_autonomy: 0.8
+  anomaly_quarantine_enabled: true
+  sync_interval_seconds: 60
+  
+conceptnet_usage:
+  filter_controversial_relations: true
+  weight_recent_experiences_higher: true
+  allow_graph_evolution_proposals: true
+  min_confidence_for_proposal: 0.6
+  
+operator_controls:
+  emergency_isolation_requires_dual_auth: true
+  log_all_admin_commands: true
+  rate_limit_reflection_triggers: 5
+  rate_limit_period_hours: 1
+  
+bias_detection:
+  enabled: true
+  check_interval_minutes: 30
+  alert_threshold: 0.7
