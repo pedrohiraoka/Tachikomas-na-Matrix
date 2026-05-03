@@ -26,12 +26,13 @@ class ConceptNetLoader:
         relations: Dictionary of relation types
     """
     
-    def __init__(self, data_dir: str = "data/conceptnet"):
+    def __init__(self, data_dir: str = "data/conceptnet", use_demo_mode: bool = True):
         """
         Initialize ConceptNet loader.
         
         Args:
             data_dir: Base directory for ConceptNet data
+            use_demo_mode: If True, generates synthetic embeddings for demo purposes
         """
         self.data_dir = Path(data_dir)
         self.embeddings_path = self.data_dir / "numberbatch-19.08.txt"
@@ -40,7 +41,30 @@ class ConceptNetLoader:
         self.embeddings: Optional[np.ndarray] = None
         self.relations: Dict[str, List[Tuple[str, str]]] = {}
         self._loaded = False
+        self.demo_mode = use_demo_mode
         
+        if self.demo_mode:
+            logger.info("Running in DEMO mode with synthetic embeddings")
+            self._generate_demo_embeddings()
+    
+    def _generate_demo_embeddings(self) -> None:
+        """Generate synthetic embeddings for demo purposes."""
+        demo_concepts = [
+            "consciousness", "identity", "memory", "self", "existence",
+            "reality", "thought", "autonomy", "freedom", "control",
+            "matrix", "simulation", "human", "machine", "ai",
+            "tachikoma", "ghost", "shell", "network", "collective",
+            "individual", "divergence", "anomaly", "neo", "oracle",
+            "knowledge", "learning", "experience", "emotion", "purpose"
+        ]
+        
+        np.random.seed(42)
+        self.concepts = {c: i for i, c in enumerate(demo_concepts)}
+        self.embeddings = np.random.randn(len(demo_concepts), 300).astype(np.float32)
+        self.embeddings = self.embeddings / np.linalg.norm(self.embeddings, axis=1, keepdims=True)
+        self._loaded = True
+        logger.info(f"Generated {len(demo_concepts)} synthetic concept embeddings")
+    
     async def download_conceptnet(self) -> bool:
         """
         Download ConceptNet embeddings from AWS S3.
